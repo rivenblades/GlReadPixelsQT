@@ -99,7 +99,7 @@ void ModernGLWidget::initializeGL(){
 }
 
 void ModernGLWidget::paintGL(){
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 if(img){
@@ -188,7 +188,7 @@ void ModernGLWidget::paintEvent(QPaintEvent *event){
 
 //    if(resizing==false)
 
-    if(img)
+//    if(img)
         painter.drawImage(0,0,*img);
 
 }
@@ -208,11 +208,13 @@ void ModernGLWidget::resizeEvent(QResizeEvent *e){
     m_height = e->size().height();
     qDebug()<<m_width<<" " <<m_height;
 
-    QImage *newimg = new QImage(m_width, m_height, QImage::Format_RGB888);
-    newimg->fill(Qt::black);
-    delete img;
-    img=nullptr;
-    img = newimg;
+//    QImage *newimg = new QImage(m_width, m_height, QImage::Format_RGB888);
+//    newimg->fill(Qt::black);
+//    delete img;
+//    img=nullptr;
+//    img = newimg;
+    img = new QImage(e->size(),QImage::Format_RGB888);
+//    update();
 
     //*img = img->scaled(m_width, m_height, Qt::KeepAspectRatio);
     glViewport(0,0,m_width,m_height);
