@@ -15,3 +15,6 @@ I want to render opengl into a QImage.Want to use glfw and glew for opengl conte
 
 # Resizing more horizontally cuts the triangle horizontally
 ![alt text](Resized_horizontal_bug.png)
+
+# Image is with green background now
+![alt text](QImage_fill_green.png)
