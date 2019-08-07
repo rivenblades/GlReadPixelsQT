@@ -148,7 +148,7 @@ if(img){
            }
 
 
-
+            glPixelStorei(GL_PACK_ALIGNMENT,1);
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_RED, GL_UNSIGNED_BYTE, tga.rpic);
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_GREEN, GL_UNSIGNED_BYTE, tga.gpic);
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_BLUE, GL_UNSIGNED_BYTE, tga.bpic);
