@@ -18,3 +18,6 @@ I want to render opengl into a QImage.Want to use glfw and glew for opengl conte
 
 # Image is with green background now
 ![alt text](QImage_fill_green.png)
+
+# Calling glfwSetWindowSize(window,m_width,m_height); in resizeEvent of Qt fixed it
+![alt text](Correct_Needed_glfwSetWindowSize_when_resizing_qt_window.png)
