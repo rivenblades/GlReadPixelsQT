@@ -15,7 +15,7 @@ glfwInit();
 //       glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        GLFWwindow* window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(640, 480, "GLFW window", NULL, NULL);
         if (!window)
         {
                std::cerr<< "GLFW Window creating failed";
@@ -30,11 +30,12 @@ glfwInit();
        std::cout<< glewGetErrorString(res);
        exit(1);
    }
-   glfwHideWindow(window);
+//   glfwHideWindow(window);
 
 
     QApplication a(argc, argv);
     MainWindow w;
+    w.setWindow(window);
     w.show();
     a.exec();
 

@@ -23,17 +23,31 @@
 #include <QTimer>
 #include <QPainter>
 #include <unistd.h>
+#include "glew.h"
+#include "glfw3.h"
+#include "GL/glut.h"
 class ModernGLWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit ModernGLWidget(QWidget *parent=0);
+
     float tr_x=0.0f,tr_y=0.0f,tr_z=0.0f;//translate x,y,z(camera)
     float r_x,r_y,r_z;                  //rotate x,y,z(camera)
 
+
+    // GLFW stuff.
+    void setWindow(GLFWwindow* _window ){window = _window;}
+    GLFWwindow *window;
+    //glfwSetWindowSizeCallback(window, window_size_callback); // Set the to callback function name
+    void window_size_callback(GLFWwindow* window, int width, int height)
+    {
+        // What to do
+    }
+
     //Render to image to display content
     QImage *img;
-
+    QImage img1;
 
     std::string file_obj ;
     std::string file_nm  ;

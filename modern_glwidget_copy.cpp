@@ -5,6 +5,8 @@
 ModernGLWidget::ModernGLWidget(QWidget *parent)
     //:QOpenGLWidget (parent)
 {
+//    setAttribute(Qt::WA_OpaquePaintEvent);
+//         setAttribute(Qt::WA_StaticContents);
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(paintGL()));
     timer->start(60);
@@ -81,6 +83,7 @@ ModernGLWidget::ModernGLWidget(QWidget *parent)
     m_width = width();
     m_height = height();
     img =new QImage(m_width,m_height, QImage::Format_RGB888);
+    img1 = QImage(m_width, m_height, QImage::Format_RGB888);
     qDebug()<<m_width<<" "<<m_height;
     initializeGL();
     oldWidth = 0;
@@ -102,7 +105,7 @@ void ModernGLWidget::paintGL(){
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-if(img){
+
     //qDebug()<<"PAINTING";
     int unchangable_w = m_width;
     int unchangable_h = m_height;
@@ -119,7 +122,7 @@ if(img){
           unsigned int canvasRenderBuffer;
           glGenRenderbuffers(1, &canvasRenderBuffer);
           glBindRenderbuffer(GL_RENDERBUFFER, canvasRenderBuffer);
-          glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, unchangable_w, unchangable_h);
+          glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, 800, 800);
           glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, canvasRenderBuffer);
 
             /* Prepare the targa header */
@@ -142,18 +145,28 @@ if(img){
 //                tga.rpic = nullptr;
 //                tga.gpic = nullptr;
 //                tga.bpic = nullptr;
-                tga.rpic = new GLubyte[unchangable_w*unchangable_h*10];
-                tga.gpic = new GLubyte[unchangable_w*unchangable_h*10];
-                tga.bpic = new GLubyte[unchangable_w*unchangable_h*10];
+                int v=1;
+                tga.rpic = new GLubyte[unchangable_w*unchangable_h*v];
+                tga.gpic = new GLubyte[unchangable_w*unchangable_h*v];
+                tga.bpic = new GLubyte[unchangable_w*unchangable_h*v];
            }
+            int screenWidth,screenHeight;
+            glfwGetFramebufferSize(window, &screenWidth, &screenHeight); /* Get size, store into specified variables  */
 
 
             glPixelStorei(GL_PACK_ALIGNMENT,1);
+            glPixelStorei(GL_PACK_ROW_LENGTH,  0);
+            glPixelStorei(GL_PACK_SKIP_ROWS,   0);
+            glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+             glFlush();
+            glReadBuffer( GL_BACK );
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_RED, GL_UNSIGNED_BYTE, tga.rpic);
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_GREEN, GL_UNSIGNED_BYTE, tga.gpic);
             glReadPixels(0,0,unchangable_w, unchangable_h, GL_BLUE, GL_UNSIGNED_BYTE, tga.bpic);
-
-            img->fill(Qt::black);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//*img = (img->scaled(width(),height(),Qt::KeepAspectRatio));
+//           img1 = img1.scaled(width(),height());
+            img1.fill(Qt::green);
             unsigned int pixelSize = 3;
 
 //            GLubyte *rpixels=new GLubyte[unchangable_w*10];
@@ -173,13 +186,17 @@ if(img){
                     GLubyte valb = tga.bpic[y * unchangable_w + x];
 
                     QColor value(valr, valg, valb);
-                    img->setPixelColor(x, y, value);
+//                    value.setRed((value.red() + 11)%255);
+//                    value.setRed((value.green() + 11)%255);
+//                    value.setRed((value.blue() + 11)%255);
+                    img1.setPixelColor(x, y, value);
                 }
             }
 
-            *img = (img->mirrored(false,true));
-}
-
+            img1 = img1.mirrored(false,true);
+            glDeleteFramebuffers(1,&canvasFrameBuffer);
+            glDeleteRenderbuffers(1,&canvasRenderBuffer);
+    glfwSwapBuffers(window);
     update();
 }
 
@@ -189,8 +206,12 @@ void ModernGLWidget::paintEvent(QPaintEvent *event){
 //    if(resizing==false)
 
 //    if(img)
-        painter.drawImage(0,0,*img);
 
+//    img->fill(Qt::green);
+
+        painter.drawImage(0,0,img1);
+        painter.setBrush(QBrush(Qt::blue));
+painter.drawRect(QRectF(img1.width()-100,0,100,100));
 }
 /*
 void ModernGLWidget::resizeGL(int w, int h){
@@ -213,9 +234,14 @@ void ModernGLWidget::resizeEvent(QResizeEvent *e){
 //    delete img;
 //    img=nullptr;
 //    img = newimg;
-    img = new QImage(e->size(),QImage::Format_RGB888);
+    qDebug()<<e->size().width();
+//    delete img;
+    img1 = QImage(m_width,m_height, QImage::Format_RGB888);
+//    img1 = img1.scaled(m_width, m_height,Qt::KeepAspectRatio);
+    img1.fill(Qt::green);
+//    img = new QImage(e->size(),QImage::Format_RGB888);
 //    update();
-
+    glfwSetWindowSize(window,m_width,m_height);
     //*img = img->scaled(m_width, m_height, Qt::KeepAspectRatio);
     glViewport(0,0,m_width,m_height);
     glMatrixMode(GL_PROJECTION);
